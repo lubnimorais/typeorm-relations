@@ -33,7 +33,7 @@ class OrdersProducts {
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   price: number;
 
-  @Column('numeric')
+  @Column({ type: 'int' })
   quantity: number;
 
   @CreateDateColumn()
