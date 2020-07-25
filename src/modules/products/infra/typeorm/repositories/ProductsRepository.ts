@@ -56,7 +56,7 @@ class ProductsRepository implements IProductsRepository {
   ): Promise<Product[]> {
     const productsData = await this.findAllById(products);
 
-    const prods = productsData.map(productData => {
+    const newProducts = productsData.map(productData => {
       const productFind = products.find(
         product => product.id === productData.id,
       );
@@ -69,16 +69,16 @@ class ProductsRepository implements IProductsRepository {
         throw new AppError('Quantity insufficient');
       }
 
-      const newProd = productData;
+      const auxProd = productData;
 
-      newProd.quantity -= productFind.quantity;
+      auxProd.quantity -= productFind.quantity;
 
-      return newProd;
+      return auxProd;
     });
 
-    await this.ormRepository.save(prods);
+    await this.ormRepository.save(newProducts);
 
-    return prods;
+    return newProducts;
   }
 }
 
