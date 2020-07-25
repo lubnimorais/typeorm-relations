@@ -44,23 +44,25 @@ class CreateOrderService {
     const productsData = await this.productsRepository.findAllById(productsIds);
 
     const compileProducts = productsData.map(productData => {
-      const prod = products.find(
-        findProduct => findProduct.id === productData.id,
-      );
+      const index = products.findIndex(item => item.id === productData.id);
+
+      if (products[index].quantity > productData.quantity) {
+        throw new AppError('insufficient stock for product');
+      }
 
       return {
         product_id: productData.id,
         price: productData.price,
-        quantity: prod?.quantity || 0,
+        quantity: products[index].quantity,
       };
     });
+
+    await this.productsRepository.updateQuantity(products);
 
     const order = await this.ordersRepository.create({
       customer,
       products: compileProducts,
     });
-
-    await this.productsRepository.updateQuantity(products);
 
     return order;
   }
